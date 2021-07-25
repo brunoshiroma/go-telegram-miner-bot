@@ -92,12 +92,18 @@ func main() {
 
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, msgText)
 			msg.ReplyToMessageID = update.Message.MessageID
-			bot.Send(msg)
+			_, err = bot.Send(msg)
+			if err != nil {
+				log.Printf("Error sending message, e = %#v", err)
+			}
 		} else {
 			log.Printf("[%s] not allowed", update.Message.From.UserName)
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "403")
 			msg.ReplyToMessageID = update.Message.MessageID
-			bot.Send(msg)
+			_, err = bot.Send(msg)
+			if err != nil {
+				log.Printf("Error sending message, e = %#v", err)
+			}
 		}
 	}
 
