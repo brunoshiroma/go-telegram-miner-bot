@@ -14,5 +14,11 @@ test:
 test-cover: test
 	go tool cover -html=cover.out
 
-lint:
+vet:
 	go vet -assign -printf -unmarshal -unreachable -unusedresult -structtag -tests ./...
+
+lint:
+	docker run --rm -v $(CURDIR):/app -w /app golangci/golangci-lint:v1.41.1 golangci-lint run -v
+
+tidy:
+	go mod tidy
