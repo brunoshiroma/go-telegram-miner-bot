@@ -3,6 +3,7 @@ package internal
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 	"sync"
@@ -12,6 +13,12 @@ import (
 )
 
 func DoMinersCheck(config MinersConfigJson) (MinersResult, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("\n\nError %#s\n\n", r)
+		}
+	}()
+
 	var (
 		wg          *sync.WaitGroup
 		resultsChan chan MinerResult
@@ -86,6 +93,8 @@ func CreateResult(body string, config MinerConfigJson) MinerResult {
 	if len(strings.TrimSpace(config.Response.JSONPath)) > 0 {
 		jqResult := gjson.Get(body, config.Response.JSONPath)
 		resultBody = jqResult.String()
+	} else {
+		resultBody = body
 	}
 
 	return MinerResult{

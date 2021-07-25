@@ -23,7 +23,6 @@ func DoJSONPRC20(minerConfig MinerConfigJson, wg *sync.WaitGroup, results chan M
 	}
 
 	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", url.Hostname(), url.Port()))
-	conn.SetDeadline(time.Now().Add(time.Second * 10))
 	if err != nil {
 		results <- MinerResult{
 			Success: false,
@@ -32,6 +31,7 @@ func DoJSONPRC20(minerConfig MinerConfigJson, wg *sync.WaitGroup, results chan M
 		}
 		return
 	}
+	conn.SetDeadline(time.Now().Add(time.Second * 10))
 
 	_, err = fmt.Fprintln(conn, minerConfig.Request.Body)
 	if err != nil {

@@ -5,17 +5,20 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCheck(t *testing.T) {
 	testServer := httptest.NewServer(
 		http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-			if r.URL.Path == "/test_ok" {
+			switch r.URL.Path {
+			case "/test_ok":
 				rw.WriteHeader(http.StatusOK)
-				rw.Write([]byte(`{"result":{"value":1, "status":"ok"}}`))
-			} else {
+				_, _ = rw.Write([]byte(`{"result":{"value":1, "status":"ok"}}`))
+			default:
 				rw.WriteHeader(http.StatusInternalServerError)
-				rw.Write([]byte("NOK"))
+				_, _ = rw.Write([]byte("NOK"))
 			}
 		}),
 	)
@@ -40,7 +43,7 @@ func TestCheck(t *testing.T) {
 				Name: "JSONRPC_OK",
 				Request: MinerConfigRequestJson{
 					Method: "JSONRPC20",
-					URL:    fmt.Sprintf("%s/test_ok", testServer.URL),
+					URL:    fmt.Sprintf("%s/test_jsonrpc_ok", testServer.URL),
 				},
 				Response: MinerConfigResponseJson{
 					JSONPath: "result.status",
@@ -57,7 +60,7 @@ func TestCheck(t *testing.T) {
 				Name: "TEST_NOK",
 				Request: MinerConfigRequestJson{
 					Method: "GET",
-					URL:    fmt.Sprintf("%s/test_nok", testServer.URL),
+					URL:    "0.0.0.0",
 				},
 				Response: MinerConfigResponseJson{
 					JSONPath: "result.valuea",
@@ -67,7 +70,7 @@ func TestCheck(t *testing.T) {
 				Name: "JSONRPC_NOK",
 				Request: MinerConfigRequestJson{
 					Method: "JSONRPC20",
-					URL:    fmt.Sprintf("%s/test_nok", testServer.URL),
+					URL:    "0.0.0.0;0",
 				},
 				Response: MinerConfigResponseJson{
 					JSONPath: "result.statusa",
@@ -77,7 +80,7 @@ func TestCheck(t *testing.T) {
 				Name: "NOK",
 				Request: MinerConfigRequestJson{
 					Method: "not implemented",
-					URL:    fmt.Sprintf("%s/test_nok", testServer.URL),
+					URL:    "0.0.0.0",
 				},
 				Response: MinerConfigResponseJson{
 					JSONPath: "result.status",
@@ -87,10 +90,25 @@ func TestCheck(t *testing.T) {
 	}
 
 	t.Run("Test check OK", func(t *testing.T) {
-		DoMinersCheck(configOk)
+		result, err := DoMinersCheck(configOk)
+
+		assert.NoError(t, err)
+
+		for _, minerResult := range result.Miners {
+			if minerResult.Name == "TEST_OK" {
+				assert.Equal(t, "1", minerResult.Result)
+			} else {
+				assert.Equal(t, "", minerResult.Result)
+			}
+		}
 	})
 
 	t.Run("Test check nok", func(t *testing.T) {
-		DoMinersCheck(configNok)
+		result, err := DoMinersCheck(configNok)
+
+		assert.NoError(t, err)
+		assert.False(t, result.Miners[0].Success)
+		assert.False(t, result.Miners[1].Success)
+		assert.False(t, result.Miners[2].Success)
 	})
 }
