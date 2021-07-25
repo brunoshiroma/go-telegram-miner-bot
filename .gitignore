@@ -1,0 +1,8 @@
+miners_bot.json
+.vscode
+
+# exec bin
+/go-telegram-miner-bot
+/go-telegram-miner-bot.exe
+/main
+/main.exe

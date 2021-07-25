@@ -1,0 +1,26 @@
+{
+    "telegramToken":"TOKEN_TELEGRAM",
+    "telegramUsername":"YOUR_TELEGRAM_USERNAME",
+    "miners":[{
+        "name": "exacavator+nicehash",
+        "request" : {
+            "url": "http://amazing-rig:4000/api?command=%7B%22id%22%3A1%2C%22method%22%3A%22algorithm.list%22%2C%22params%22%3A%5B%5D%7D",
+            "body": null,
+            "method":"GET"
+        },
+        "Response" :{
+            "jsonPath":"algorithms.0.speed"
+        }
+    },{
+        "name": "ethminer",
+        "request" : {
+            "url": "http://fantastic-rig:3333/",
+            "body": "{\"id\": 1,\"jsonrpc\": \"2.0\",\"method\":\"miner_getstat1\"}",
+            "method":"JSONRPC20"
+        },
+        "Response" :{
+            "jsonPath":"result.2"
+        }
+    }]
+}
+
