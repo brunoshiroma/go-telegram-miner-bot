@@ -1,0 +1,27 @@
+[Unit]
+Description=Telegram miner bot
+ConditionPathExists=/usr/share/lib/go-telegram-miner-bot/go-telegram-miner-bot
+After=network.target
+ 
+[Service]
+Type=simple
+User=telegram-miner-bot
+Group=telegram-miner-bot
+
+Restart=on-failure
+RestartSec=10
+startLimitIntervalSec=60
+
+WorkingDirectory=/usr/share/lib/go-telegram-miner-bot/
+ExecStart=/usr/share/lib/go-telegram-miner-bot/go-telegram-miner-bot
+
+# make sure log directory exists and owned by syslog
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p /var/log/go-telegram-miner-bot
+ExecStartPre=/bin/chown root:adm /var/log/go-telegram-miner-bot
+ExecStartPre=/bin/chmod 664 /var/log/go-telegram-miner-bot
+StandardOutput=syslog
+StandardError=syslog
+ 
+[Install]
+WantedBy=multi-user.target

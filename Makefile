@@ -1,5 +1,12 @@
+
+OUTFILE=go-telegram-miner-bot
+
+ifeq ($(OS),Windows_NT)
+    OUTFILE := $(OUTFILE).exe
+endif
+
 build:
-	go build cmd/go-telegram-miner-bot/main.go
+	go build -o $(OUTFILE) cmd/go-telegram-miner-bot/main.go
 
 clean:
 	go clean -testcache
