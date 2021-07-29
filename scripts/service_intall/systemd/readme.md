@@ -19,6 +19,10 @@ Uninstall
 #on dir with scripts
 sudo ./uninstall_service.sh
 
-#delete the logs
+#delete the logs, if you want
 sudo rm -rf /var/log/go-telegram-miner-bot
 ```
+
+## Why not use StandardOutput=file:...
+It´s dont work on raspian ( not in the time of creation of the scripts)  
+More context in [stackoverflox](https://stackoverflow.com/questions/37585758/how-to-redirect-output-of-systemd-service-to-a-file)
