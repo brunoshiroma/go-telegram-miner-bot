@@ -64,6 +64,13 @@ func main() {
 		log.Panic(err)
 	}
 
+	autoCheck, err := internal.NewAutoCheck(minersConfig)
+	if err != nil {
+		log.Printf("Error on initialize autocheck %s", err.Error())
+	} else if autoCheck != nil {
+		go autoCheck.Start()
+	}
+
 	for update := range updates {
 		if update.Message == nil { // ignore any non-Message Updates
 			continue

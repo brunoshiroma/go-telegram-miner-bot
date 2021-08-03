@@ -40,11 +40,7 @@ func DoMinersCheck(config MinersConfigJson) (MinersResult, error) {
 			wg.Add(1)
 			go DoJSONPRC20(minerConfig, wg, resultsChan)
 		default:
-			result.Miners = append(result.Miners, struct {
-				Name    string
-				Success bool
-				Result  string
-			}{
+			result.Miners = append(result.Miners, MinerResult{
 				Name:    minerConfig.Name,
 				Success: false,
 				Result:  fmt.Sprintf("%s uses method %s, not implemented", minerConfig.Name, minerConfig.Request.Method),
