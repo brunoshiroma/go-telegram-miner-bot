@@ -31,7 +31,7 @@ func main() {
 		log.Panic(err)
 	}
 
-	buffer := make([]byte, 1024*1024*1024)
+	buffer := make([]byte, 1024*32)
 
 	read, err := minersConfigFile.Read(buffer)
 	if err != nil {
